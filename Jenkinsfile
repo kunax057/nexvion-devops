@@ -3,6 +3,27 @@ pipeline {
 
     stages {
 
+        stage('Docker Diagnostic') {
+            steps {
+                sh '''
+                    echo "=== Identity ==="
+                    id
+
+                    echo "=== Docker ==="
+                    which docker
+                    docker --version
+                    docker ps
+
+                    echo "=== Workspace ==="
+                    pwd
+                    ls -la
+
+                    echo "=== Docker Socket ==="
+                    ls -l /var/run/docker.sock
+                '''
+            }
+        }
+
         stage('Build') {
             steps {
                 sh '''
@@ -23,14 +44,8 @@ pipeline {
             steps {
                 sh '''
                     sleep 5
-
                     docker compose ps
-
-                    docker exec nexvion-app \
-                      wget -q --spider http://localhost/
-
-                    docker inspect --format='{{.State.Status}}' nexvion-app \
-                      | grep -q running
+                    docker exec nexvion-app wget -q --spider http://localhost/
                 '''
             }
         }
