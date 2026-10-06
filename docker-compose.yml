@@ -1,0 +1,16 @@
+services:
+  nexvion:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: nexvion:1.0
+    container_name: nexvion-app
+    ports:
+      - "8081:80"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
