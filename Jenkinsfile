@@ -3,12 +3,6 @@ pipeline {
 
     stages {
 
-        stage('Checkout') {
-            steps {
-                checkout scm
-            }
-        }
-
         stage('Build') {
             steps {
                 sh '''
@@ -29,14 +23,8 @@ pipeline {
             steps {
                 sh '''
                     sleep 5
-
                     docker compose ps
-
-                    docker exec nexvion-app \
-                      wget -q --spider http://localhost/
-
-                    docker inspect --format='{{.State.Status}}' nexvion-app \
-                      | grep -q running
+                    docker exec nexvion-app wget -q --spider http://localhost/
                 '''
             }
         }
