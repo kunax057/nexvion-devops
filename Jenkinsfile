@@ -6,7 +6,7 @@ pipeline {
         stage('Build') {
             steps {
                 sh '''
-                    docker compose build
+                    docker build -t nexvion:1.0 .
                 '''
             }
         }
@@ -23,8 +23,14 @@ pipeline {
             steps {
                 sh '''
                     sleep 5
+
                     docker compose ps
-                    docker exec nexvion-app wget -q --spider http://localhost/
+
+                    docker exec nexvion-app \
+                      wget -q --spider http://localhost/
+
+                    docker inspect --format='{{.State.Status}}' nexvion-app \
+                      | grep -q running
                 '''
             }
         }
