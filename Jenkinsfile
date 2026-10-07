@@ -8,14 +8,14 @@ pipeline {
                     echo "=== PIPELINE IDENTITY ==="
                     id
 
+                    echo "=== PROCESS ==="
+                    ps -ef
+
                     echo "=== DOCKER SOCKET ==="
                     ls -ln /var/run/docker.sock
 
-                    echo "=== DOCKER VERSION ==="
-                    docker --version
-
-                    echo "=== DOCKER TEST ==="
-                    docker ps
+                    echo "=== WAITING 60 SECONDS ==="
+                    sleep 60
                 '''
             }
         }
