@@ -1,7 +1,18 @@
+
 pipeline {
     agent any
 
     stages {
+        stage('Incident Analyzer Tests') {
+            steps {
+                sh '''
+                    set -e
+                    echo "=== TESTING INCIDENT ANALYZER ==="
+                    python3 scripts/test_incident_analyzer.py
+                '''
+            }
+        }
+
         stage('Build Docker Image') {
             steps {
                 sh '''
@@ -70,7 +81,7 @@ pipeline {
 
     post {
         success {
-            echo 'NEXVION CI/CD, Ansible validation, and security scan completed successfully.'
+            echo 'NEXVION CI/CD, incident tests, Ansible validation, and security scan completed successfully.'
         }
         failure {
             echo 'Pipeline failed. Check the stage logs.'
