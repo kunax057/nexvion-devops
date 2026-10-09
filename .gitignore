@@ -1,3 +1,11 @@
 
 # Local Kubernetes binary
 /minikube-linux-amd64
+
+# Terraform local files
+terraform/.terraform/
+terraform/terraform.tfstate
+terraform/terraform.tfstate.backup
+terraform/terraform.tfstate.*
+terraform/crash.log
+terraform/*.tfplan
