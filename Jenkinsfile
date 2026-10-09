@@ -12,6 +12,19 @@ pipeline {
             }
         }
 
+        stage('Ansible Playbook Validation') {
+            steps {
+                sh '''
+                    set -e
+                    echo "=== VALIDATING ANSIBLE PLAYBOOK ==="
+                    ansible-playbook --syntax-check \
+                        -i ansible/inventory/hosts.ini \
+                        ansible/site.yml
+                    echo "Ansible playbook syntax validation successful."
+                '''
+            }
+        }
+
         stage('Trivy Security Scan') {
             steps {
                 sh '''
@@ -57,7 +70,7 @@ pipeline {
 
     post {
         success {
-            echo 'NEXVION CI/CD and security scan completed successfully.'
+            echo 'NEXVION CI/CD, Ansible validation, and security scan completed successfully.'
         }
         failure {
             echo 'Pipeline failed. Check the stage logs.'
