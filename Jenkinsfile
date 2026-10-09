@@ -3,21 +3,6 @@ pipeline {
     agent any
 
     stages {
-        stage('Diagnose Docker Access') {
-            steps {
-                sh '''
-                    echo "=== PIPELINE USER ==="
-                    id
-
-                    echo "=== DOCKER SOCKET ==="
-                    ls -ln /var/run/docker.sock
-
-                    echo "=== DOCKER ACCESS TEST ==="
-                    docker ps
-                '''
-            }
-        }
-
         stage('Build Docker Image') {
             steps {
                 sh '''
