@@ -1,0 +1,33 @@
+---
+- name: Configure NEXVION host prerequisites
+  hosts: local
+  become: true
+  gather_facts: true
+
+  tasks:
+    - name: Verify supported operating system
+      ansible.builtin.assert:
+        that:
+          - ansible_distribution == "Ubuntu"
+        fail_msg: "This playbook is intended for Ubuntu."
+
+    - name: Check NEXVION project files
+      ansible.builtin.stat:
+        path: "{{ item }}"
+      loop:
+        - "{{ playbook_dir }}/../Dockerfile"
+        - "{{ playbook_dir }}/../Jenkinsfile"
+        - "{{ playbook_dir }}/../kubernetes/deployment.yaml"
+      register: nexvion_files
+
+    - name: Report project file availability
+      ansible.builtin.debug:
+        msg: "{{ item.item | basename }} exists: {{ item.stat.exists }}"
+      loop: "{{ nexvion_files.results }}"
+
+    - name: Install Nginx
+      ansible.builtin.apt:
+        name: nginx
+        state: present
+        update_cache: true
+        cache_valid_time: 3600

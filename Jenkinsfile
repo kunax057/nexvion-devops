@@ -1,4 +1,3 @@
-
 pipeline {
     agent any
 
@@ -7,9 +6,22 @@ pipeline {
             steps {
                 sh '''
                     set -e
-                    echo "=== BUILDING SECURED NEXVION IMAGE ==="
                     docker build -t nexvion:1.1 .
                     docker images nexvion:1.1
+                '''
+            }
+        }
+
+        stage('Trivy Security Scan') {
+            steps {
+                sh '''
+                    set -e
+                    echo "=== SCANNING NEXVION IMAGE ==="
+                    trivy image \
+                        --exit-code 1 \
+                        --severity HIGH,CRITICAL \
+                        --ignore-unfixed \
+                        nexvion:1.1
                 '''
             }
         }
@@ -18,16 +30,12 @@ pipeline {
             steps {
                 sh '''
                     set -e
-                    echo "=== DEPLOYING NEXVION 1.1 ==="
-
                     docker rm -f nexvion-app 2>/dev/null || true
-
                     docker run -d \
                         --name nexvion-app \
                         --restart unless-stopped \
                         -p 8081:80 \
                         nexvion:1.1
-
                     docker ps --filter name=nexvion-app
                 '''
             }
@@ -37,15 +45,11 @@ pipeline {
             steps {
                 sh '''
                     set -e
-                    echo "=== WAITING FOR NEXVION ==="
                     sleep 5
-
-                    echo "=== HEALTH CHECK ==="
                     docker exec nexvion-app \
                         wget --no-verbose --tries=1 --spider \
                         http://localhost/
-
-                    echo "=== NEXVION DEPLOYMENT SUCCESSFUL ==="
+                    echo "NEXVION deployment and health check successful."
                 '''
             }
         }
@@ -53,10 +57,10 @@ pipeline {
 
     post {
         success {
-            echo 'NEXVION CI/CD pipeline completed successfully.'
+            echo 'NEXVION CI/CD and security scan completed successfully.'
         }
         failure {
-            echo 'NEXVION CI/CD pipeline failed.'
+            echo 'Pipeline failed. Check the stage logs.'
         }
     }
 }
