@@ -16,15 +16,8 @@ pipeline {
             steps {
                 sh '''
                     set -eu
-                    echo "=== PIPELINE DOCKER DIAGNOSTICS ==="
-                    id
-                    id -G
-                    ls -ln /var/run/docker.sock
-                    docker context show
-                    docker info
                     echo "=== BUILDING NEXVION IMAGE ==="
                     docker build -t nexvion:1.1 .
-                    docker images nexvion:1.1
                 '''
             }
         }
