@@ -107,7 +107,7 @@ pipeline {
                         HTTP_STATUS=$(curl -sS -o /dev/null \
                             -w '%{http_code}' \
                             --max-time 10 \
-                            http://host.docker.internal:8081/ || true)
+                            http://localhost:8081/ || true)
 
                         if [ "$HTTP_STATUS" = "200" ]; then
                             echo "PASS: NEXVION HTTP status 200"
